@@ -12,13 +12,12 @@ class Livro:
       Autor - {self._autor}
       ''')
         
-  def consultarIvroID(self):
-      sql = f'''
-      SELECT * FROM "Livro"
-      WHERE "ID" = '{self._id}'
-      '''
-      return sql  
-      
+  def consultarLivroPorID(self):
+        sql = f'''
+        SELECT * FROM "Livro"
+        WHERE "ID" = '{self._id}'
+        '''
+        return sql
   def consultarAlugueis(self):
       sql = f'''
       SELECT * FROM "Aluguel"
