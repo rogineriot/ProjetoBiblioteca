@@ -1,60 +1,7 @@
 import psycopg2
-from classConexao import Conexao
-from classCliente import Cliente
-from classLivro import Livro
-# def criarBancoDeDados(conexao):
-#     conexao.manipularBanco('''
-#     DROP DATABASE IF EXISTS "Biblioteca" ;
-#     CREATE DATABASE "Biblioteca";
-#     ''')
-
-# def criarTabelaCliente(conexao):
-#     conexao.manipularBanco('''
-#     DROP TABLE IF EXISTS "Cliente";
-#     CREATE TABLE "Cliente"(
-#         "ID" int GENERATED ALWAYS AS IDENTITY,
-#         "Nome" varchar(255) NOT NULL,
-#         "CPF" char(11) NOT NULL UNIQUE,
-#         Primary Key("ID")
-#     );
-#     ''')
-
-# def criarTabelaLivro(conexao):
-
-#     conexao.manipularBanco('''
-#     DROP TABLE IF EXISTS "Livro";
-#     CREATE TABLE "Livro(
-#         "ID" int GENERATED ALWAYS AS IDENTITY,
-#         "Nome" varchar(255) NOT NULL,
-#         "Autor" varchar(255) NOT NULL,
-#         Primary Key("ID")
-#     );
-#     ''')
-
-# def criarTabelaAluguel(conexao):
-
-#     conexao.manipularBanco('''
-#     DROP TABLE IF EXISTS "Aluguel";
-#     CREATE TABLE "Aluguel"(
-#         "ID" int GENERATED ALWAYS AS IDENTITY,
-#         "ID_Cliente" int NOT NULL,
-#         "ID_Livro" int NOT NULL,
-#         "Data_Aluguel" timestamp default current_timestamp,
-#         Primary Key("ID"),
-#         Constraint fk_cliente
-#             Foreign Key ("ID_Cliente")
-#             References "Cliente"("ID")
-#             ON DELETE CASCADE
-#             ON UPDATE NO ACTION
-#             ,
-#         Constraint fk_livro
-#             Foreign Key ("ID_Livro")
-#             References "Livro"("ID")
-#             ON DELETE SET NULL
-#             ON UPDATE NO ACTION
-            
-#     );
-#     ''')
+from Controle.classConexao import Conexao
+from Modelo.classCliente import Cliente
+from Modelo.classLivro import Livro
 
 def query(tabela, id):
       
@@ -65,7 +12,7 @@ def query(tabela, id):
       
       return resultado
      
-      
+#Função para mostrar Clientes     
 def mostrarClientes(conexao):
   listaClientes = conexao.consultarBanco('''
                                          select * from "Cliente"
@@ -77,6 +24,7 @@ def mostrarClientes(conexao):
           ID  - {cliente[0]}
           Nome  - {cliente[1]}
           ''')
+#Função para mostrar Livros
 def mostrarLivros(conexao):
       listaLivros = con.consultarBanco('''
                 Select * FROM "Livro"
@@ -85,7 +33,8 @@ def mostrarLivros(conexao):
       print("ID | Nome")
       for livro in listaLivros:
                     print(f"{livro[0]} | {livro[1]}")
-
+                    
+#Função para mostrar alugueis
 def mostrarAlugueis(conexao):
     resultado = conexao.consultarBanco('''
     Select * FROM "Aluguel"
@@ -109,7 +58,7 @@ def mostrarAlugueis(conexao):
    
   
 try:
-      
+ #Login ddo banco de dados     
  login = "postgres"
  password = "postgre"
  con = Conexao("Biblioteca","localhost","5432",login,password)
@@ -117,7 +66,7 @@ try:
 
  opcao = 1
  while opcao != 0 :   
-            
+  #Menu principal         
   print(f'''
       1 - Cliente
       2 - Livro
@@ -140,6 +89,7 @@ try:
                         ''')
                   opcaoCliente = int(input("Digite o que deseja fazer: "))
                   match opcaoCliente:
+                        #visualizar cliente específico
                         case 1:
                               condicao = True
                               while condicao: 
@@ -153,13 +103,15 @@ try:
                                     else:
                                           print("Id digitado não existe,digite novamente")      
                                                       
-                        case 2: 
+                        case 2:
+                              #inserir novo cliente 
                               nome = input("Digite o nome do novo cliente: ")
                               cpf = input("Digite o Cpf do novo cliente: ")
                               novoCliente = Cliente(None,nome,cpf)
                               con.manipularBanco(novoCliente.inserirCliente())
                               print("Cliente Adicionado com sucesso!") 
                         case 3:
+                              #atualizar cliente
                               mostrarClientes(con)
                               condicao2 = True
                               while condicao2:
@@ -173,16 +125,21 @@ try:
                                                       3 - Atulizar Nome E Cpf
                                                       """))
                                     match escolhaCampo:
+                                          #atualizar somente o nome
                                           case 1 :
                                                 novoClienteAtualizar._nome = input("Digite o novo Nome: ")
                                                 con.manipularBanco(novoClienteAtualizar.atualizarCliente()) 
                                                 print("Atualizado com sucesso!") 
                                                 condicao2 = False
+                                                
+                                          #atualizar somente o cpf
                                           case 2 :
                                                 novoClienteAtualizar._cpf = input("Digite o novo Cpf: ")
                                                 con.manipularBanco(novoClienteAtualizar.atualizarCliente())
                                                 print("Atualizado com sucesso!")
                                                 condicao2 = False
+                                         
+                                          #atualizar nome e cpf     
                                           case 3 :
                                                 novoClienteAtualizar._nome = input("Digite o novo Nome: ")  
                                                 novoClienteAtualizar._cpf = input("Digite o novo Cpf: ")  
@@ -192,6 +149,7 @@ try:
                               else:
                                     print("Id digitado não existe,digite novamente")                      
                         case 4:
+                              #deletar cliente
                               mostrarClientes(con)
                               condicao3 = True
                               while condicao3: 
@@ -204,11 +162,12 @@ try:
                                           condicao3 = False
                                     else:
                                           print("Id digitado não existe,digite novamente") 
-                                                
+                                               
   match opcao :
       case 2:
            opcaoLivro = 1
            while opcaoLivro !=0 :
+                 #menu livro
                   print('''
                         1. Ver Livro específico
                         2. Inserir novo livro
@@ -218,6 +177,7 @@ try:
                         ''')  
                   opcaoLivro = int(input("Digite o que deseja fazer: "))                               
                   match opcaoLivro:
+                  #Ver livro específico      
                    case 1:
                         mostrarLivros(con)
                         condicao4 = True
@@ -231,12 +191,14 @@ try:
                               else:
                                     print("Id digitado não existe,digite novamente")    
                    case 2: 
+                        #inserir Livro
                         novoNome = input("Digite o nome do novo Livro: ")
                         novoAutor = input("Digite o nome do autor do novo livro: ")
                         novoLivro = Livro(None,novoNome,novoAutor)
                         con.manipularBanco(novoLivro.inserirLivro())
                         print("Livro Adicionado com sucesso!")                             
                    case 3 :
+                        #Atualizar Livro
                         mostrarLivros(con)
                         condicao5 = True
                         while condicao5: 
@@ -248,20 +210,22 @@ try:
                                                                         1 - Nome
                                                                         2 - Autor
                                                                         3 - Atulizar Nome E Autor
-                                                                        
-                                                                        """))
+                                                                                                                                                """))
                                     match escolhaCampo:
+                                          #Atualizar somente o nome do livro
                                           case 1 :
                                                 novoLivroAtualizado._nome = input("Digite o nome do novo livro: ")
                                                 con.manipularBanco(novoLivroAtualizado.atualizarLivro()) 
                                                 print("Atualizado com sucesso!") 
                                                 condicao5 = False
                                           case 2 :
+                                                #Atualizar somente o nome do autor do livro
                                                 novoLivroAtualizado._autor = input("Digite o novo nome do autor: ")
                                                 con.manipularBanco(novoLivroAtualizado.atualizarLivro())
                                                 print("Atualizado com sucesso!")
                                                 condicao5 = False
                                           case 3 :
+                                                #Atualizar o nome e o autor do livro
                                                 novoLivroAtualizado._nome = input("Digite o nome do novo livro: ")  
                                                 novoLivroAtualizado._autor = input("Digite o novo nome do autor: ")  
                                                 con.manipularBanco(novoLivroAtualizado.atualizarLivro()) 
@@ -269,8 +233,9 @@ try:
                                                 condicao5 = False
                               else:
                                     print("Id digitado não existe,digite novamente")    
-                                                                        
+                                                                       
                    case 4:
+                              #deletar Livro
                               mostrarLivros(con)
                               condicao6 = True
                               while condicao6:
@@ -283,10 +248,12 @@ try:
                                           condicao6 = False
                                     else:
                                           print("Id digitado não existe,digite novamente")  
-                  
-                                    
+                                   
   match opcao :
      case 3:
+           #Menu aluguel
+           opcaoAluguel = 1
+           while opcaoAluguel !=0 :   
             print('''
                         1. Adicionar aluguel
                         2. Ver Alugueis
@@ -295,6 +262,7 @@ try:
                         ''')  
             opcaoAluguel = int(input("Digite o que deseja fazer: "))      
             match opcaoAluguel:
+                  #Inserir novo aluguel
                    case 1:
                         mostrarClientes(con)
                         print("Escolha um Cliente:")
@@ -309,29 +277,34 @@ try:
                                     INSERT INTO "Aluguel"
                                     Values(default, {clienteID}, {livroID}, default)
                                     ''')
-
                         print("Aluguel cadastrado.")    
                    case 2:
+                         #Mostrar alugueis de um cliente 
                          mostrarAlugueis(con)
-                         idConsulta = int(input("Digite o id do cliente para consultar os alugueis: "))
+                         idConsulta = int(input("Digite o id do aluguel para consultar: "))
                          tuplas =  con.consultarBanco(f'''
                                              SELECT "Cliente"."Nome", "Livro"."Nome" FROM "Aluguel"
                                                 INNER JOIN "Cliente" 
                                                       ON "Aluguel"."ID_Cliente" = "Cliente"."ID"
                                                 INNER JOIN "Livro"
                                                       ON "Aluguel"."ID_Livro" = "Livro"."ID"
-                                                WHERE  "Cliente"."ID" = '{idConsulta}' 
-
+                                                WHERE  "Aluguel"."ID" = '{idConsulta}' 
                                              ''')
                          for resultado in tuplas:
                                 print(f'''
                                     Nome do Cliente  - {resultado[0]}
                                     Livro Alugado  - {resultado[1]}
                                           ''')
-                                
-                         
-                        
+                   case 3:
+                              #Deletar aluguel 
+                              mostrarAlugueis(con)
+                              idAluguelDeletado = int(input("Digite o id do aluguel que deseja deletar: "))
+                              con.manipularBanco(f'''
+                                                DELETE FROM "Aluguel"
+                                                WHERE "ID" = '{idAluguelDeletado}'    
+                                                '''    )
+                              print("Aluguel deletado com sucesso!")             
+                                                
 except(Exception, psycopg2.Error) as error:
         print("Ocorreu um erro -", error)
         
-

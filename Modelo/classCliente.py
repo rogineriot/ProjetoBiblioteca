@@ -3,7 +3,8 @@ class Cliente:
         self._id = id
         self._nome = nome
         self._cpf = cpf
-    
+        
+    #Função para imprimir cliente
     def imprimirCliente(self):
 
         print(f'''
@@ -11,7 +12,7 @@ class Cliente:
         Nome - {self._nome}
         CPF - {self._cpf}
         ''')
-
+    #Função para consultar cliente específico
     def consultarClientePorID(self):
         sql = f'''
         SELECT * FROM "Cliente"

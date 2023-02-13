@@ -53,4 +53,3 @@ class Livro:
     '''    
     return sql
       
-    
